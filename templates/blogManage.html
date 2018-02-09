@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	{% if session.logged_in %}
+		<form action="{{ url_for('add_post') }}" method="post" class="add-post" enctype="multipart/form-data">
+			<dl>
+				<dt>Post title:
+				<dd><input type="text" size="30" name="title" spellcheck="true" required>
+				<dt>Post date:
+				<dd><input type="date" name="post_date" required>
+				<dt>Post description(one sentence):
+				<dd><textarea name="description" rows="3" cols="40" spellcheck="true" required></textarea>
+				<dt>Post html file:
+				<dd><input type="file" name="html_file" required>
+				<!--I will store images embedded in html files in static/images directory instead of individually in the database -->
+				<dd><input type="submit" value="Submit">
+			</dl>
+		</form>
+	{% endif %}
+	<ul class="posts">
+	{% for post in posts %}
+		<li><h2>{{ post.title }}</h2>
+		<li><form action="{{ url_for('update_post') }}" method="post" class="update-post" enctype="multipart/form-data">
+			<dl>
+				<dt>Post title:
+				<dd><input type="text" size="30" name="title" spellcheck="true" value="{{ post.title }}" required>
+				<dt>Post date:
+				<dd><input type="date" name="post_date" value="{{ post.post_date }}" required>
+				<dt>Post description(one sentence):
+				<dd><textarea name="description" rows="3" cols="40" spellcheck="true" value="{{ post.description }}" required>{{ post.description }}</textarea>
+				<dt>Post html file:
+				<dd><input type="file" name="html_file" required>
+				<input type="hidden" name="id" value="{{ post.id }}">
+				<!--I will store images embedded in html files in static/images directory instead of individually in the database -->
+				<dd><input type="submit" value="Update">
+			</dl>
+		</form>
+		<form action="{{ url_for('delete_post') }}" method="post" class="add-post" enctype="multipart/form-data">
+			<dl>
+				<input type="hidden" size="30" name="title" spellcheck="true" value="{{ post.title }}" required>
+				<input type="hidden" name="post_date" value="{{ post.post_date }}" required>
+				<input  type="hidden" name="description" value="{{ post.description }}">
+				<input type="hidden" name="html_file" filelist="{{ post.html_file }}"  required>
+				<input type="hidden" name="id" value="{{ post.id }}">
+				<!--I will store images embedded in html files in static/images directory instead of individually in the database -->
+				<dd><input type="submit" value="Delete">
+			</dl>
+		</form></li>
+	{% else %}
+		<li><em>Unbelievable. No posts here so far</em>
+	{% endfor %}
+	</ul>
+{% endblock %}

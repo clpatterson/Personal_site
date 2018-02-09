@@ -1,0 +1,55 @@
+<!doctype html>	
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+        <meta name="author" content="Charlie Patterson">
+        <meta name="description" content="The personal site of Charlie Patterson." />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=1">
+
+		<!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/custom.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/base.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/skeleton.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/layout.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/pygments.css') }}">
+
+        <!-- favicon -->
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+
+		<title>Charlie Patterson</title>
+    </head>
+
+  		<!-- Page -->
+  		<body>
+  			<div class="container">
+                <div class="four columns sidebar">
+                   <ul>
+                       <li>
+                           <h3 id="logo">
+                               <a href="{{  url_for('index') }}">Charlie Patterson</a>
+                           </h3>
+                       </li>
+                       <li><a href="mailto:charlie@charliepjq.com">charlie@charliepjq.com</a></li>
+                        <li>
+                            <div class="favicon three-spaced row">
+                                    <span><a href="https://twitter.com/CLawrenceP"><img alt="Twitter" src="/static/images/twitter.ico"></a></span>
+                                    <span><a href="https://github.com/clpatterson"><img alt="GitHub" src="/static/images/github.ico"></a></span>
+                                    <span><a href="https://www.linkedin.com/in/pattersoncharlesl/"><img alt="Linkedin" src="/static/images/linkedin.ico"></a></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="eleven columns offset-by-one content">
+                    {% block content %}{% endblock %}
+                    {% if session.logged_in%}
+                      <a href="{{ url_for('logout') }}" style="float: right;">log out</a>
+                    {% endif %}
+                </div>
+                    <!--{% if session.login_in %}-->
+                    <!--{% endif %}-->
+                </div>
+        </body>
+</html>
+                    

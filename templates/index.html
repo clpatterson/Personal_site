@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="landing-item">
+        <p>I'm a fluent Mandarin speaker, Fulbrighter, and autodidact learning full stack web development from Brooklyn, New York.</p>
+        <h3>Skills</h3>
+        <ul>
+            <li>Python: Flask, Jinja2, Sqlite3, BeautifulSoup, Requests, JSON, Regex, and more</li>
+            <li>SQL</li>
+            <li>HTML &amp; CSS</li>
+            <li>Git</li>
+        </ul>
+        <h3>Projects</h3>
+            <ul>
+                <li>reviewScraper &raquo; A ptyhon module for scarping consumer review data for products on Amazon, TripAdvisor, Home Depot and Zillow.</li>
+                    <!-- <span id="skill">Python</span><span id="skill">BeautifulSoup</span><span id="skill">Requests</span><span id="skill">Regex</span><span id="skill">JSON</span>-->
+                <li>Personal Website 1.0 &raquo; This personal website featuring a databased backed content management system for my plog content.</li>
+                    <!-- <span id="skill">Python</span><span id="skill">Flask</span><span id="skill">HTML</span><span id="skill">CSS</span> -->
+                <li>Easy to use web app for scarping product reviews from select sites coming soon...</li>
+            </ul>
+         <div class="landing-item">    
+        <h3>Blog</h3>
+        <ul>
+            {% for post in posts %}
+            <li>
+                <span class="post-date">{{ post.post_date }}</span> &raquo; <a href="{{ url_for('view_post', post_id=post.id, post_date=post.post_date, post_title=post.title) }}">{{ post.title }}</a> 
+            </li>
+            {% endfor %}
+        </ul>
+        <hr>
+            <!-- {% if session.logged_in%}
+            <a href="{{ url_for('logout') }}" style="float: right;">log out</a>
+            {% endif %} -->
+    </div>
+    </div>
+{% endblock %}

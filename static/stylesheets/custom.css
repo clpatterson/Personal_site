@@ -1,0 +1,134 @@
+/*
+Sitewide default layout:
+*/
+
+/* don't flick when overflowing viewport */
+html {
+    overflow: -moz-scrollbars-vertical; 
+    overflow-y: scroll;
+}
+
+div.container {
+    padding-top: 60px;
+}
+
+nav {
+    position: fixed;
+    /*width: 170px;*/
+}
+
+#logo {
+    margin-bottom: 20px;
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    letter-spacing: -1px;
+    font-weight: bold;
+}
+#logo a {
+    text-decoration: none;
+}
+
+nav ul {
+    float: left;  }
+nav ul li {
+    display: block;
+    margin-bottom: 10px; }
+nav ul li a,
+nav ul li a:visited,
+nav ul li a:active  {
+    font-size: 14px;
+    color: #555;
+    text-decoration: none;
+    font-weight: bold; }
+nav ul li a:hover,
+nav ul li a:focus {
+    color: #222; }
+
+.favicon img{
+    width:16px; height:16px;
+}
+
+
+.sidebar{
+    text-align:center;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.three-spaced span{
+    width:31%;
+    display: inline-block;
+    margin:0;padding:0;
+}
+
+/*
+landing page:
+*/
+
+.landing{/*width:900px;*/}
+.landing h1{font-size:24px;text-align:left;}
+.landing-item{/*position:relative;width:700px; */margin:0 auto 0 auto;margin-bottom:30px;}
+.landing-item h2{text-transform:uppercase;font-weight:bold;text-align:left;}
+.header-year{margin:20px 0 20px 0;}
+.landing-item ul,.landing-item p{margin-top:10px;}
+.landing-item ul li{text-align:left;margin-bottom:5px;}
+.eleven .columns .offset-by-one .content .landing-item .skill span{
+    font-family: Consolas, monaco, monospace !important;}
+.post-date {
+    font-family: Consolas, monaco, monospace;
+
+}
+/*.skill {
+  border: 1px solid #50a9d1 !important;
+  margin-right: 10px !important;
+  text-transform: uppercase;
+  font-weight: 500;
+  width: auto;
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1.33333em;
+  padding: 7px 18px;
+  margin-top: 0.8em;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;
+}*/
+
+/*
+Posts:
+*/
+
+.meta{
+    color: #AAA;
+}
+
+
+div.figure {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  width: 60%;
+  border: thin silver solid;
+  padding: 0.5em;
+}
+div.figure p {
+  text-align: center;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+}
+div.figure img {
+  width: 100%
+}
+
+#subscribe {
+  margin-left: auto;
+  margin-right: auto;    
+}
+#subscribe p{
+  text-align: center;
+}
