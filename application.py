@@ -10,9 +10,9 @@ application.config.from_object(__name__) #Load config from config.py file
 
 application.config.update(dict(
     DATABASE=os.path.join(application.root_path, 'personal_site.db'),
-    SECRET_KEY='development key',
+    SECRET_KEY='yNpPtgvHtxC6bXUYA',
     USERNAME='admin',
-    PASSWORD='default'
+    PASSWORD='D6kbTfAgdpYUXHtwM'
 ))
 
 #application.config.from_envvar('BLOG_SETTINGS', silent=True)
