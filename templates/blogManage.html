@@ -3,7 +3,7 @@
 {% block content %}
 
 	{% if session.logged_in %}
-		<form action="{{ url_for('add_post') }}" method="post" class="add-post" enctype="multipart/form-data">
+		<form action="{{ url_for('add_post') }}" method="post" class="dropzone" enctype="multipart/form-data">
 			<dl>
 				<dt>Post title:
 				<dd><input type="text" size="30" name="title" spellcheck="true" required>
@@ -13,7 +13,8 @@
 				<dd><textarea name="description" rows="3" cols="40" spellcheck="true" required></textarea>
 				<dt>Post html file:
 				<dd><input type="file" name="html_file" required>
-				<!--I will store images embedded in html files in static/images directory instead of individually in the database -->
+				<dt>Post image(s) file:</dt>
+					{{ dropzone.create(action=url_for('show_posts')) }}
 				<dd><input type="submit" value="Submit">
 			</dl>
 		</form>
@@ -21,7 +22,7 @@
 	<ul class="posts">
 	{% for post in posts %}
 		<li><h2>{{ post.title }}</h2>
-		<li><form action="{{ url_for('update_post') }}" method="post" class="update-post" enctype="multipart/form-data">
+		<li><form action="{{ url_for('update_post') }}" method="post" class="dropzone" enctype="multipart/form-data">
 			<dl>
 				<dt>Post title:
 				<dd><input type="text" size="30" name="title" spellcheck="true" value="{{ post.title }}" required>
@@ -31,12 +32,13 @@
 				<dd><textarea name="description" rows="3" cols="40" spellcheck="true" value="{{ post.description }}" required>{{ post.description }}</textarea>
 				<dt>Post html file:
 				<dd><input type="file" name="html_file" required>
+				<dt>Post image(s) file:</dt>
+					{{ dropzone.create(action=url_for('show_posts')) }}
 				<input type="hidden" name="id" value="{{ post.id }}">
-				<!--I will store images embedded in html files in static/images directory instead of individually in the database -->
 				<dd><input type="submit" value="Update">
 			</dl>
 		</form>
-		<form action="{{ url_for('delete_post') }}" method="post" class="add-post" enctype="multipart/form-data">
+		<form action="{{ url_for('delete_post') }}" method="post" class="delete-post" enctype="multipart/form-data">
 			<dl>
 				<input type="hidden" size="30" name="title" spellcheck="true" value="{{ post.title }}" required>
 				<input type="hidden" name="post_date" value="{{ post.post_date }}" required>

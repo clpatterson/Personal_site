@@ -27,6 +27,24 @@ nav {
     text-decoration: none;
 }
 
+span#skill {
+  border: 1px solid #50a9d1;
+  margin-right: 10px;
+  text-transform: uppercase;
+  font-weight: 500;
+  width: auto;
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1.33333em;
+  padding: 7px 18px;
+  margin-top: 0.8em;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;
+}
+
 nav ul {
     float: left;  }
 nav ul li {
@@ -79,23 +97,6 @@ landing page:
     font-family: Consolas, monaco, monospace;
 
 }
-/*.skill {
-  border: 1px solid #50a9d1 !important;
-  margin-right: 10px !important;
-  text-transform: uppercase;
-  font-weight: 500;
-  width: auto;
-  display: inline-block;
-  font-size: 11px;
-  line-height: 1.33333em;
-  padding: 7px 18px;
-  margin-top: 0.8em;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  border-radius: 8px;
-}*/
 
 /*
 Posts:

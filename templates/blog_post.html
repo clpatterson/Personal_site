@@ -6,7 +6,7 @@
 		<div id="post">
 			<h2 id="{{ item.title }}">{{ item.title }}</h2>
 			<p class="meta">{{ item.post_date }}</p>
-			{{ item.html_file|quote_begone|safe }}
+			{{ item.html_file|safe }}
 			<hr>
 		</div>
 		{% endfor %}

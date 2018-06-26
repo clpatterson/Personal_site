@@ -1,34 +1,46 @@
+#!/usr/bin/python
+
+"""Flask application code for my personal website."""
 
 import os
-import sqlite3
+import psycopg2
+from psycopg2 import extras
+from flask_dropzone import Dropzone
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
+from flask_uploads import UploadSet, configure_uploads, IMAGES, \
+    patch_request_class
 
 
-application = Flask(__name__) #create application instance and pull configs from instance directory
-application.config.from_object(__name__) #Load config from config.py file
 
-application.config.update(dict(
-    DATABASE=os.path.join(application.root_path, 'personal_site.db'),
-    SECRET_KEY='yNpPtgvHtxC6bXUYA',
-    USERNAME='admin',
-    PASSWORD='D6kbTfAgdpYUXHtwM'
-))
+# Create application instance.
+application = Flask(__name__)
 
-#application.config.from_envvar('BLOG_SETTINGS', silent=True)
+# Initialize Dropzone
+dropzone = Dropzone(application)
+
+# Load config from environment variable that contains path to file.
+application.config.from_envvar('APPLICATION_SETTINGS')
+
+# Settings for flask-uploads
+application.config['UPLOADED_IMAGES_DEST'] = os.getcwd() + '/static/images'
+images = UploadSet('images', IMAGES)
+configure_uploads(application, images)
+patch_request_class(application)  # set maximum file size, default is 16MB
 
 
 def connect_db():
-    """Creates a connection to the specified database"""
-    rv = sqlite3.connect(application.config['DATABASE'])
-    rv.row_factory = sqlite3.Row
-    return rv
+    """Create connection to specified database."""
+    connection = psycopg2.connect(application.config['DATABASE'], cursor_factory=psycopg2.extras.DictCursor)
+    return connection
 
 
 def init_db():
+    """Create table from schema."""
     db = get_db()
+    cursor = db.cursor()
     with application.open_resource('schema.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
+        cursor.execute(f.read())
     db.commit()
 
 
@@ -40,25 +52,34 @@ def initdb_command():
 
 
 def get_db():
-    """Opens a new database connection if there is none yet for the
-    current application context."""
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
+    """Open new database connection if there is none yet for the current application context."""
+    if not hasattr(g, 'personalsitedb'):
+        g.personalsitedb = connect_db()
+    return g.personalsitedb
 
 
 @application.teardown_appcontext
 def close_db(error):
-    """Closes the database again at the end of the request."""
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
+    """Close database at end of the request."""
+    if hasattr(g, 'personalsitedb'):
+        g.personalsitedb.close()
+
+## A function for uploading to S3 (will likely not go this route)
+#def upload_S3(key, data):
+#    """Create connection to S3."""
+#    client = boto3.client('s3')
+#    bucket = 'person-site-cp'
+#    # A file-like object to upload. At a minimum, it must implement the read method, and must return bytes.
+#    s3.Bucket(bucket).put_object(Key=key, Body=data)
 
 
 @application.route('/')
 def index():
     db = get_db()
-    cur = db.execute('select title, post_date, id from posts order by post_date desc;')
-    posts = cur.fetchall()
+    cursor = db.cursor()
+    cursor.execute('SELECT title, post_date, id FROM posts ORDER BY post_date DESC;')
+    posts = cursor.fetchall()
+    print(posts)
     return render_template('index.html', posts=posts)
 
 
@@ -67,23 +88,27 @@ def show_posts():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from posts order by post_date desc;')
-    posts = cur.fetchall()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM posts ORDER BY post_date DESC;')
+    posts = cursor.fetchall()
     return render_template('blogManage.html', posts=posts)
 
-
+# Upload data from form to database and upload images to S3.
 @application.route('/add_post', methods=['POST'])
 def add_post():
     if not session.get('logged_in'):
         abort(401)
-    f = request.files['html_file']
-    html_file = f.read().decode('utf-8')
-    print(html_file)
+    # Write post data to Postgres database
+    get_html_file = request.files['html_file']
+    html_file = get_html_file.read().decode('utf-8')
     db = get_db()
-    db.execute('insert into posts (title, post_date, description, html_file) values (?, ?, ?, ?)', 
+    cursor = db.cursor()
+    cursor.execute('INSERT INTO posts (title, post_date, description, html_file) VALUES (%s, %s, %s, %s);', 
                 [request.form['title'], request.form['post_date'], request.form['description'], html_file])
     db.commit()
-    flash('New entry was successfully posted')
+
+    # Save uploaded images to file
+    flash('New entry was successfully posted.')
     return redirect(url_for('show_posts'))
 
 
@@ -92,25 +117,37 @@ def update_post():
     if not session.get('logged_in'):
         abort(401)
     print('preparing to pull form data')
-    f = request.files['html_file']
-    html_file = f.read()
+
+    # Update data in Postgres database
+    get_html_file = request.files['html_file']
+    html_file = get_html_file.read().decode('utf-8')
     print(html_file)
-    db = get_db()                                                                                                                                                                                                                                                                                                                                                                                                                              
-    cur = db.execute('update posts set title = (?), post_date = (?), description = (?), html_file = (?) where id = (?)', 
+    db = get_db()
+    cursor = db.cursor()                                                                                                                                                                                                                                                                                                                                                                                                                              
+    cursor.execute('UPDATE posts SET title = (%s), post_date = (%s), description = (%s), html_file = (%s) WHERE id = (%s);', 
         [request.form['title'], request.form['post_date'], request.form['description'], html_file, request.form['id']])
-    print('executed the update in db')
+    print('Updated post.')
     db.commit()
+
+    # Update images
+
+
     return redirect(url_for('show_posts'))
 
 
 @application.route('/delete_post', methods=['POST'])
 def delete_post():
     if not session.get('logged_in'):
-        abort(401)
+        abort(401) 
     postId = request.form.get('id')
     print(postId)
-    db = get_db()                                                                                                                                                                                                                                                                                                                                                                                                                              
-    cur = db.execute('delete from posts where id = (?)', (postId,))
+
+    #To-do: delete post images from file by referencing post_id
+    # Delete post from Postgres database
+
+    db = get_db()
+    cursor = db.cursor()                                                                                                                                                                                                                                                                                                                                                                                                                             
+    cursor.execute('DELETE FROM posts WHERE id = (%s)', (postId,))
     db.commit()
     return redirect(url_for('show_posts')) 
 
@@ -118,15 +155,20 @@ def delete_post():
 @application.route('/<post_date>/<post_title>/<post_id>')
 def view_post(post_id,post_date,post_title):
     db = get_db()
-    res = db.execute('select title, post_date, description, html_file from posts where id = (?);', (post_id,))
-    post = res.fetchall()
-    print(res.fetchone())
+    cursor = db.cursor()
+    cursor.execute("SELECT title, post_date, description, html_file FROM posts WHERE id = (%s);", (post_id,))
+    post = cursor.fetchall()
+    print(cursor.fetchone())
     print(post)
+
+    # To-do: Fetch images file url from where? From database?
+
     return render_template('blog_post.html', post=post)
 
 
 @application.template_filter()
 def quote_begone(html_string): #html_sting is html text pulled from the database wrapped in b'
+    print(html_string)
     return  html_string.decode('utf-8')
 
 
@@ -140,7 +182,7 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
-            flash('You were logged in')
+            flash('You were logged in.')
             return redirect(url_for('show_posts'))
     return render_template('login.html', error=error)
 

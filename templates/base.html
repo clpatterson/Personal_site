@@ -3,20 +3,44 @@
 	<head>
 		<!-- Required meta tags -->
 		<meta charset="utf-8">
-        <meta name="author" content="Charlie Patterson">
-        <meta name="description" content="The personal site of Charlie Patterson." />
+    <meta name="author" content="Charlie Patterson">
+    <meta name="description" content="The personal site of Charlie Patterson." />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=1">
 
 		<!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/custom.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/base.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/skeleton.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/layout.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/pygments.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/skeleton.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/layout.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/pygments.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/custom.css') }}">
 
-        <!-- favicon -->
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
-        <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+
+    <!--Putting Flask-Dropzone stuff in here for now -->
+    {{ dropzone.load() }}
+    <!--{{ dropzone.style('border: 2px dashed #0087F7; margin: 5%; min-height: 100px;') }}-->
+
+    <style type="text/css">
+      span#skill {
+                  border: 1px solid #50a9d1;
+                  margin-right: 10px;
+                  text-transform: uppercase;
+                  font-weight: 500;
+                  width: auto;
+                  display: inline-block;
+                  font-size: 11px;
+                  line-height: 1.33333em;
+                  padding: 7px 18px;
+                  margin-top: 0.8em;
+                  -webkit-border-radius: 8px;
+                  -moz-border-radius: 8px;
+                  -ms-border-radius: 8px;
+                  -o-border-radius: 8px;
+                  border-radius: 8px;
+                }
+    </style>
 
 		<title>Charlie Patterson</title>
     </head>
