@@ -10,10 +10,10 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 
 
 # Create application instance.
-application = Flask(__name__)
+application = Flask(__name__, instance_path)
 
 # Load config from environment variable that contains path to file.
-application.config.from_envvar('APPLICATION_SETTINGS')
+#application.config.from_envvar('APPLICATION_SETTINGS')
 
 
 def connect_db():
