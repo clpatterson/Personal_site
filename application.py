@@ -5,35 +5,21 @@
 import os
 import psycopg2
 from psycopg2 import extras
-from flask_dropzone import Dropzone
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
-from flask_uploads import UploadSet, configure_uploads, IMAGES, \
-    patch_request_class
-
 
 
 # Create application instance.
 application = Flask(__name__)
 
-# Initialize Dropzone
-dropzone = Dropzone(application)
-
 # Load config from environment variable that contains path to file.
 application.config.from_envvar('APPLICATION_SETTINGS')
-
-# Settings for flask-uploads
-application.config['UPLOADED_IMAGES_DEST'] = os.getcwd() + '/static/images'
-images = UploadSet('images', IMAGES)
-configure_uploads(application, images)
-patch_request_class(application)  # set maximum file size, default is 16MB
 
 
 def connect_db():
     """Create connection to specified database."""
     connection = psycopg2.connect(application.config['DATABASE'], cursor_factory=psycopg2.extras.DictCursor)
     return connection
-
 
 def init_db():
     """Create table from schema."""
@@ -43,13 +29,11 @@ def init_db():
         cursor.execute(f.read())
     db.commit()
 
-
 @application.cli.command('initdb')
 def initdb_command():
     """Initializes the database."""
     init_db()
     print('Initialized the database.')
-
 
 def get_db():
     """Open new database connection if there is none yet for the current application context."""
@@ -57,21 +41,11 @@ def get_db():
         g.personalsitedb = connect_db()
     return g.personalsitedb
 
-
 @application.teardown_appcontext
 def close_db(error):
     """Close database at end of the request."""
     if hasattr(g, 'personalsitedb'):
         g.personalsitedb.close()
-
-## A function for uploading to S3 (will likely not go this route)
-#def upload_S3(key, data):
-#    """Create connection to S3."""
-#    client = boto3.client('s3')
-#    bucket = 'person-site-cp'
-#    # A file-like object to upload. At a minimum, it must implement the read method, and must return bytes.
-#    s3.Bucket(bucket).put_object(Key=key, Body=data)
-
 
 @application.route('/')
 def index():
@@ -81,7 +55,6 @@ def index():
     posts = cursor.fetchall()
     print(posts)
     return render_template('index.html', posts=posts)
-
 
 @application.route('/blogManage')
 def show_posts():
@@ -93,7 +66,7 @@ def show_posts():
     posts = cursor.fetchall()
     return render_template('blogManage.html', posts=posts)
 
-# Upload data from form to database and upload images to S3.
+# Upload data from form to database.
 @application.route('/add_post', methods=['POST'])
 def add_post():
     if not session.get('logged_in'):
@@ -106,11 +79,8 @@ def add_post():
     cursor.execute('INSERT INTO posts (title, post_date, description, html_file) VALUES (%s, %s, %s, %s);', 
                 [request.form['title'], request.form['post_date'], request.form['description'], html_file])
     db.commit()
-
-    # Save uploaded images to file
     flash('New entry was successfully posted.')
     return redirect(url_for('show_posts'))
-
 
 @application.route('/update_post', methods=['POST'])
 def update_post():
@@ -128,12 +98,7 @@ def update_post():
         [request.form['title'], request.form['post_date'], request.form['description'], html_file, request.form['id']])
     print('Updated post.')
     db.commit()
-
-    # Update images
-
-
     return redirect(url_for('show_posts'))
-
 
 @application.route('/delete_post', methods=['POST'])
 def delete_post():
@@ -141,16 +106,11 @@ def delete_post():
         abort(401) 
     postId = request.form.get('id')
     print(postId)
-
-    #To-do: delete post images from file by referencing post_id
-    # Delete post from Postgres database
-
     db = get_db()
     cursor = db.cursor()                                                                                                                                                                                                                                                                                                                                                                                                                             
     cursor.execute('DELETE FROM posts WHERE id = (%s)', (postId,))
     db.commit()
     return redirect(url_for('show_posts')) 
-
 
 @application.route('/<post_date>/<post_title>/<post_id>')
 def view_post(post_id,post_date,post_title):
@@ -160,17 +120,12 @@ def view_post(post_id,post_date,post_title):
     post = cursor.fetchall()
     print(cursor.fetchone())
     print(post)
-
-    # To-do: Fetch images file url from where? From database?
-
     return render_template('blog_post.html', post=post)
-
 
 @application.template_filter()
 def quote_begone(html_string): #html_sting is html text pulled from the database wrapped in b'
     print(html_string)
     return  html_string.decode('utf-8')
-
 
 @application.route('/login', methods=['GET','POST'])
 def login():
@@ -185,7 +140,6 @@ def login():
             flash('You were logged in.')
             return redirect(url_for('show_posts'))
     return render_template('login.html', error=error)
-
 
 @application.route('/logout')
 def logout():
