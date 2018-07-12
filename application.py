@@ -14,7 +14,10 @@ application = Flask(__name__)
 #application = Flask(__name__, instance_path=os.path.abspath("personal_website/instance/"))
 
 # Load config from environment variable that contains path to file.
-application.config.from_envvar('APPLICATION_SETTINGS')
+#application.config.from_envvar('APPLICATION_SETTINGS')
+
+# Load config from file
+app.config.from_pyfile('config.py')
 
 
 def connect_db():
