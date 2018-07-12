@@ -10,7 +10,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 
 
 # Create application instance.
-application = Flask(__name__, instance_path)
+application = Flask(__name__, instance_path=os.path.abspath("personal_website/instance/"))
 
 # Load config from environment variable that contains path to file.
 #application.config.from_envvar('APPLICATION_SETTINGS')
