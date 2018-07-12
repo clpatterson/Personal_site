@@ -5,7 +5,3 @@ posts/
 static/.DS_Store
 __pycache__/
 psiteKey.pem
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
